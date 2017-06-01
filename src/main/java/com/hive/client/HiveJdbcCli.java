@@ -11,21 +11,21 @@ import org.apache.log4j.Logger;
  */
 public class HiveJdbcCli {
     private static String driverName = "org.apache.hive.jdbc.HiveDriver";
-    private static String url = "jdbc:hive2://192.168.8.207:10001/default;auth=noSasl";
-    private static String user = "hiveuser";
+    private static String url = "jdbc:hive2://127.0.0.1:10001/default;auth=noSasl";
+    private static String user = "";
     private static String password = "";
     private static String sql = "";
     private static ResultSet res;
     private static final Logger log = Logger.getLogger(HiveJdbcCli.class);
 
     public static void main(String[] args)throws Exception {
-        String ip= "dbtestyun.e6xayf.com";
-        String port= "8089";
-        String dbname= "E6PlateFormMain";
-        String username= "sa";
-        String password= "xa1101";
+        String ip= "";
+        String port= "";
+        String dbname= "";
+        String username= "";
+        String password= "";
         String databasetype= "SQL Server2008";
-        String table="Base.E6Driver";
+        String table="Base.test";
         HiveUtil client= HiveUtil.getInstance();
     //    client.initTable(table,databasetype,ip,port,dbname,username,password);
         log.info(client.getMaxDefaultColumns(table,dbname,"createdtime"));
