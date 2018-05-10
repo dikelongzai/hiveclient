@@ -91,11 +91,6 @@ public class DBDaTaType {
     static Map<String, String> MAP_HIVE_MYSQL_TYPE = new HashMap<String, String>() {
         {
             put(DATA_TYPE_STRING, DATA_TYPE_VARCHAR);
-//            put(DATA_TYPE_NVARCHAR, DATA_TYPE_VARCHAR);
-//            put(DATA_TYPE_VARCHAR2, DATA_TYPE_VARCHAR);
-//            put(DATA_TYPE_DATE, DATA_TYPE_STRING);
-//            put(DATA_TYPE_NVARCHAR2, DATA_TYPE_STRING);
-//            put(DATA_TYPE_NUMBER, DATA_TYPE_FLOAT);
 
         }
 

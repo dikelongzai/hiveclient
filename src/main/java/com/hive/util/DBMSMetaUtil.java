@@ -270,6 +270,147 @@ public class DBMSMetaUtil {
         //
         return result;
     }
+    /**
+     * 获取ResultSetMetaData
+     */
+    public static ResultSetMetaData  listColumnsMetaData(String databasetype, String ip, String port, String dbname,
+                                                        String username, String password, String tableName) {
+        // 去除首尾空格
+        databasetype = trim(databasetype);
+        ip = trim(ip);
+        port = trim(port);
+        dbname = trim(dbname);
+        username = trim(username);
+        password = trim(password);
+        tableName = trim(tableName);
+        //
+        DATABASETYPE dbtype = parseDATABASETYPE(databasetype);
+        //
+        List<Map<String, Object>> result = null;
+        String url = concatDBURL(dbtype, ip, port, dbname);
+        Connection conn = getConnection(url, username, password);
+        ResultSet rs = null;
+        //
+        try {
+            // 获取Meta信息对象
+            DatabaseMetaData meta = conn.getMetaData();
+            // 数据库
+            String catalog = null;
+            // 数据库的用户
+            String schemaPattern = null;// meta.getUserName();
+            // 表名
+            String tableNamePattern = tableName;//
+            // 转换为大写
+            if (null != tableNamePattern) {
+                tableNamePattern = tableNamePattern.toUpperCase();
+            }
+            //
+            String columnNamePattern = null;
+            // Oracle
+            if (DATABASETYPE.ORACLE.equals(dbtype)) {
+                if(tableName.contains(".")){
+                    // 查询
+                    String[] schemaTable=tableName.split("\\.");
+                    schemaPattern=schemaTable[0];
+                    tableNamePattern=schemaTable[1].toUpperCase();
+                }else{
+                    schemaPattern = username;
+                    if (null != schemaPattern) {
+                        schemaPattern = schemaPattern.toUpperCase();
+                    }
+                }
+
+
+            } else if(DATABASETYPE.SQLSERVER2005.equals(dbtype)) {
+                //mssql分割模式与表名
+                String[] schemaTable=tableName.split("\\.");
+                schemaPattern=schemaTable[0];
+                tableNamePattern=schemaTable[1].toUpperCase();
+
+            }
+            rs = meta.getColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);
+            return rs.getMetaData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            close(rs);
+            close(conn);
+        }
+        return null;
+    }
+    /**
+     * 列出表的所有字段
+     */
+    public static ResultSet listColumnsRS(String databasetype, String ip, String port, String dbname,
+                                                        String username, String password, String tableName) {
+        // 去除首尾空格
+        databasetype = trim(databasetype);
+        ip = trim(ip);
+        port = trim(port);
+        dbname = trim(dbname);
+        username = trim(username);
+        password = trim(password);
+        tableName = trim(tableName);
+        //
+        DATABASETYPE dbtype = parseDATABASETYPE(databasetype);
+        //
+        List<Map<String, Object>> result = null;
+        String url = concatDBURL(dbtype, ip, port, dbname);
+        Connection conn = getConnection(url, username, password);
+        // Statement stmt = null;
+        ResultSet rs = null;
+        //
+        try {
+            // 获取Meta信息对象
+            DatabaseMetaData meta = conn.getMetaData();
+            // 数据库
+            String catalog = null;
+            // 数据库的用户
+            String schemaPattern = null;// meta.getUserName();
+            // 表名
+            String tableNamePattern = tableName;//
+            // 转换为大写
+            if (null != tableNamePattern) {
+                tableNamePattern = tableNamePattern.toUpperCase();
+            }
+            //
+            String columnNamePattern = null;
+            // Oracle
+            if (DATABASETYPE.ORACLE.equals(dbtype)) {
+                if(tableName.contains(".")){
+                    // 查询
+                    String[] schemaTable=tableName.split("\\.");
+                    schemaPattern=schemaTable[0];
+                    tableNamePattern=schemaTable[1].toUpperCase();
+                }else{
+                    schemaPattern = username;
+                    if (null != schemaPattern) {
+                        schemaPattern = schemaPattern.toUpperCase();
+                    }
+                }
+
+
+            } else if(DATABASETYPE.SQLSERVER2005.equals(dbtype)) {
+                //mssql分割模式与表名
+                String[] schemaTable=tableName.split("\\.");
+                schemaPattern=schemaTable[0];
+                tableNamePattern=schemaTable[1].toUpperCase();
+
+            }
+//            schemaPattern="Base";
+            rs = meta.getColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);
+            return rs;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+//            close(rs);
+            close(conn);
+        }
+        //
+        return null;
+    }
 
     /**
      * 执行sql

@@ -6,7 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -31,11 +32,10 @@ public class HiveUtil {
     static String HIVE_METASTORE_WAREHOUSE_DIR="";
     static {
         Properties properties = new Properties();
-
         try {
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("hive.properties"));
         } catch (Exception var2) {
-            log.error("jdbc.properties must contains in classpath");
+            throw new IllegalArgumentException("hive.properties must be in classPath");
         }
         HIVE_JDBC_IP= properties.getProperty("hive.jdbc.url");
         log.info(" JDBC init HIVE_JDBC_IP=" + HIVE_JDBC_IP);
@@ -51,6 +51,9 @@ public class HiveUtil {
         log.info(" JDBC init PASS=" + HIVE_USER);
         HIVE_METASTORE_WAREHOUSE_DIR = properties.getProperty("hive.metastore.warehouse.dir");
         log.info(" JDBC init hive.metastore.warehouse.dir=" + HIVE_METASTORE_WAREHOUSE_DIR);
+    }
+    public void setHiveDatabase(String database){
+        HIVE_DATABASE=database;
     }
 
     /**
@@ -185,6 +188,26 @@ public class HiveUtil {
         log.info(" getHiveListColumns hiveTable = [" + hiveTable + "];result="+JSON.toJSONString(result));
         return result;
     }
+    /**
+     * 获取hive表结构
+     * @param hiveTable
+     * @return
+     */
+    public ResultSetMetaData getHiveListColumnsMeta(String hiveTable){
+        ResultSetMetaData resultSetMetaData=DBMSMetaUtil.listColumnsMetaData("hive",HIVE_JDBC_IP,HIVE_PORT,HIVE_DATABASE,HIVE_USER,HIVE_PASS, hiveTable);
+//        log.info(" getHiveListColumns hiveTable = [" + hiveTable + "];result="+JSON.toJSONString(result));
+        return resultSetMetaData;
+    }
+    /**
+     * 获取hive表结构
+     * @param hiveTable
+     * @return
+     */
+    public ResultSet getHiveListColumnsResultSet(String hiveTable){
+        ResultSet resultSetMetaData=DBMSMetaUtil.listColumnsRS("hive",HIVE_JDBC_IP,HIVE_PORT,HIVE_DATABASE,HIVE_USER,HIVE_PASS, hiveTable);
+//        log.info(" getHiveListColumns hiveTable = [" + hiveTable + "];result="+JSON.toJSONString(result));
+        return resultSetMetaData;
+    }
 
     /**
      * 根据hive库名及表名 查找hdfs路径
@@ -215,18 +238,6 @@ public class HiveUtil {
         DBMSMetaUtil.executeSql("hive",HIVE_JDBC_IP,HIVE_PORT,HIVE_DATABASE,HIVE_USER,HIVE_PASS,sql);
     }
     public static void main(String[] args) {
-//        System.out.println(DBDaTaType.getHiveType("sqlserver 2008","varchar",20));
-//        String tableName="Base.E6Driver";
-//        String createTableName="";
-//        if(tableName.contains(".")){
-//            String[] schemaTable=tableName.split("\\.");
-//            String schemaPattern=schemaTable[0];
-//            String tableNamePattern=schemaTable[1];
-//            createTableName=Constant.SCHEMA+Constant.UNDERLINE+"E6PlateFormMain"+Constant.UNDERLINE+schemaPattern+Constant.UNDERLINE+Constant.TABLE+Constant.UNDERLINE+tableNamePattern;
-//        }else{
-//            createTableName=Constant.SCHEMA+Constant.UNDERLINE+"E6PlateFormMain"+Constant.UNDERLINE+Constant.TABLE+Constant.UNDERLINE+tableName;
-//        }
-//        System.out.println(createTableName);
         String ip= "192.168.8.207";
         String port= "10001";
         String dbname= "default";
